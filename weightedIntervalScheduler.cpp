@@ -18,7 +18,8 @@ struct RequestRecord {
       int n,
       int start_value,
       int finish_value,
-      int weight
+      int weight,
+      int profit
     ){
       startValue = start_value;
       finishValue = finish_value;
@@ -31,12 +32,14 @@ struct RequestRecord {
       cout << "Start Value: " << startValue << endl;
       cout << "Finish Value: " << finishValue << endl;
       cout << "Weight: " << Weight << endl;
+      out << "Profit: " << Weight << endl;
       cout << endl;
     }
     int name;
     int startValue;
     int finishValue;
     int Weight;
+    int Profit;
 };
 
 
@@ -54,101 +57,11 @@ bool compareJobs(RequestRecord Request1, RequestRecord Request2){
   }
 }
 
-  // back tracking
-//}
-// Function: Compute Optimal jobs
-// Arguments: Vector passed through with requests, size of jobs from <vector>
-// Returns int optimal profit
-// This is a recursive function that returns maximum profit from given array of jobs
-//int computeOptimal(vector<RequestRecord> &my_requests, size_t jobs){
-  // create for jobs a vector of weights profits and optimals
-// create p class
-  //Create a base case which is just 0
-  //profits == 0
-//  if(jobs == 0);
-//    tmpRequests.
-  // if we look at the first job then then p(1) = 0
-
-  //Recursion formula
-  //Opt(j) maximum of picking job j
-  // weight of job j
-  //opt(p(j)) remainining intervals of the ones that overlap
-  // opt(j-1) overlooking previous and just overlooking
-  // base case Opt(0) is 0
-
-  //Opt(j) = max{weight of job j + opt(p(j)), OPT(j-1))
-  // example: opt of job 2 = max of weight of 2 which is 4 + opt (p(2) = 0, opt(j-1) = 0)
-  // so max(4, 0) is 4 so we pick
-  // case 1 (we pick it) remove all overlapping jobs and compute solution for the subproblem of jobs left
-
-  // case 2 (we don't pick it) simply compute optimal solution for the subproblem n-1 items left
-
-  // we can do this recursively for j = 1,2,..n and define OPT(j) = maximum weight that can be achieved
-  // by selected the jobs from first j intervals
-
-
-  // help Function: let p(j) be the largest index i such that finish time of i is less than or equal to start time of j
-  // This function will help to remove overlapping jobs
-
-//Find non-overlapping interval schedule
-// Returns if the interval in the loop from the WIS function is within the S-F interval
-// Profit is the largest index i < j such that i is compatible with j
-// max of two sub problems
-//int weightedIntervalScheduling(vector<RequestRecord> &requests, int jobs){
-//  int M[jobs];
-
-  // base case
-  // if there are no jobs then nothing
-//  if(jobs == 0){/
-//    M[0] = 0;
-//    return 0;
-//  }
-  // Iterative Bottom-Up Dynamic Programming
-//  M[0] = 0;
-//  for(int i = 1; i < jobs; i++){
-  //  int indexProfit = findProfits(requests, i);
-//    if(indexProfit != -1){
-
-  //  }
-
-//  }
-
-//  }
-///}
-
-findProfit(vector<RequestRecord> &requests, int j)
-int findMaximumProfit(vector<RequestRecord> &requests, int j){
-  int number_of_jobs = requests.size();
-  // temporary array to hold optimized weights to check solution
-  int tmpArray[number_of_jobs];
-  // Base Case 
-  if(j == 0){
+int computeOptWeight(vector<RequestRecord> &requests, int num_of_jobs){
+  if(num_of_jobs == 0){
     return 0;
   }
-  else{
-    if(requests.at(j).Weight + tmpArray[findOptimalPairInterval[job]] >= tmpArray[j-1]){
-      output j together with result of find solution
-    }
-    else{
-      //output the result of find-solution)j-1)
-    }
-  }
-  //Create array to hold the maximum profit of non-overlapping compareJobs
-  // ending at the i'th job
-  int maxProfit[number_of_jobs];
-
-  for(int i = 0; i < number_of_jobs; i++){
-    //initialize current profit to 0
-    maxProfit[i] = 0;
-
-    for(int j = 0; j < i; j++){
-      if(requests[j].finishValue <= requests.at[i].start && maxProfit[i] < maxProfit[j]){
-        maxProfit[i] = maxProfit[j];
-      }
-    }
-    maxProfit[i] += requests[i].weight;
-  }
-  return *max_element(maxProfit, maxProfit + n);
+  return maximum(computeOptWeight(num_of_jobs-1), requests[num_of_jobs].Weight + computeOptWeight(requests[num_of_jobs].Profit)));
 
 }
 int main(){
@@ -209,14 +122,22 @@ int main(){
       for(size_t i = 0; i < number_of_jobs; ++i) {
         cout <<my_requests.at(i).name << " " <<  my_requests.at(i).startValue << " " << my_requests.at(i).finishValue << " "<< my_requests.at(i).Weight << endl;
       }
+      //calcluate p-values
+      for(size_t i = 0; i < number_of_jobs; ++i) {
+        for(size_t j = 1; j > 0; --j){
+          if(my_requests.at(i).startValue >= my_requests.at(j).finishValue){
+            my_requests.at(i).Profit = j;
+          }
+        }
       for(auto request:my_requests){
         request.display();
       }
+      //Calculate the weighted interval schedule
 
-      cout << findMaximumProfit(my_requests);
-      for(size_t i = number_of_jobs; i != 0; --i) {
-        cout << findMaximumProfit(my_requests, i);
-      }
+      int memoArray[number_of_jobs];
+
+      for(size_t i = 0; i < number_of_jobs; ++i) {
+
     myFile.close();
     return 0;
 }

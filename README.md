@@ -1,6 +1,22 @@
 # weighted-interval-scheduling-algorithm
 
+Instructions:
+
+In my weighted interval-scheduling-algorithm, I programmed it in C++ language, downloaded MinGW for my path executable. 
+If you have questions in regards to download of MinGW -> https://www.ics.uci.edu/~pattis/common/handouts/mingweclipse/mingw.html
+
+I used Atom as my IDE and downloaded gpp-compiler. If you have questions on downloading this please see this link:
+https://atom.io/packages/gpp-compiler
+
+Once you clone the package or copy the files into the dir (requests.csv and main.cpp) you will be able to run this after you have the downloaded the correct compiler.
+
+I have attached a video to show compilation
+
+Description:
+
+
 Implement the Dynamic Programming Weighted Interval Scheduling algorithm, store the requests on csv file: start,finish,value
+
 
 Problem (Weighted Interval Scheduling)
 Given a set of n intervals (si
@@ -10,9 +26,7 @@ subset S of non-overlapping intervals with P
 i∈S
 vi maximized.
 
-Divide And Conquer Alogirthm Design:
-one implicitly explores the space of all possible solutions, by
-carefully decomposing things into a series of subproblemss, and then building up correct solutions to larger and larger subproblems.
+
 
 Interval Scheduling
 We have n requests labeled 1, . . . , n, with each request i specifying a
@@ -22,7 +36,7 @@ problem is to select a subset S ⊆ {1, . . . , n} of mutually compatible interv
 so as to maximize the sum of the values of the selected intervals, 
 i∈S vi.
 
-Recurion Opitmal Solution:
+Recursion Opitmal Solution:
 Compute-Opt(j)
 If j = 0 then
 Return 0
@@ -43,7 +57,6 @@ only n + 1entries, it follows that there can be at most O(n) calls to M-ComputeO
 M-Compute-Opt so as to keep track of an optimal solution in addition to its
 value: we could maintain an additional array S so that S[i]contains an optimal
 set of intervals among {1, 2, . . . , i
-
 
 Memoization of Recursion optimal solution:
 M-Compute-Opt(j)
@@ -79,7 +92,7 @@ per call, we have
 
 
 Key to the Efficient algorithm is the array in M
-. It encodes the notion
+It encodes the notion
 that we are using the value of optimal solutions to the subproblems on intervals
 {1, 2, . . . , j} for each j, and it uses (6.1) to define the value of M[j] based on
 6.2 Principles of Dynamic Programming 259
@@ -108,13 +121,3 @@ actually be one of the subproblems.)
 together with an easy-to-compute recurrence (as in (6.1) and (6.2)) that
 allows one to determine the solution to a subproblem from the solutions
 to some number of smaller subproblems.
-
-
-
-It should have instructions on how to run your program
-You may use Go, Java, C++ and Python for this extra credit assignment
-If you have questions about this assignment, please make an appointment.
-Whatever points you get here, will be added to the midterm grade, even if they go above 100.
-It is very important to make a descriptive README.md
-Remember to follow the Academic Integrity guidelines from the syllabus, and that should only submit your own work.
-You may include a link to a video on the README.md, the video does not substitute the detailed description, but it may show your program running.

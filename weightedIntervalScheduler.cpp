@@ -69,8 +69,6 @@ int findNonOverLappingPair(vector<RequestRecord> &my_requests, int interval)
       if (my_requests.at(i).finishValue <= my_requests.at(interval).startValue) {
         return i;
       }
-      //&& (findSum(L[j]) > findSum(L[i])))
-  //        L[i] = L[j];
     }
     return -1;
 }
@@ -101,7 +99,7 @@ void findSolution(int mem[], vector<RequestRecord> &my_requests, const int num_j
 
 // function: iterativeComptOut
 // Input: vector<RequestRecord> &my_requests
-// Returns nothing/
+// Returns nothing
 // Description: creates memoized array that add
 void iterativeCompOpt(vector<RequestRecord> &my_requests){
   // Using the dynamic bottom-up approach dynamic programming to unwind recursion

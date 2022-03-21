@@ -10,7 +10,7 @@ https://atom.io/packages/gpp-compiler
 
 Once you clone the package or copy the files into the dir (requests.csv and main.cpp) you will be able to run this after you have the downloaded the correct compiler.
 
-I have attached a video to show compilation
+Here is the link to the video to watch the code run: https://www.youtube.com/watch?v=6jn7H0qlcFg
 
 Description:
 

@@ -19,12 +19,13 @@ struct RequestRecord {
       int start_value,
       int finish_value,
       int weight,
-      int profit
+      int compatible_job
     ){
       startValue = start_value;
       finishValue = finish_value;
       Weight = weight;
       name = n;
+      compatibleJob = compatible_job;
     }
 
     void display() {
@@ -32,14 +33,14 @@ struct RequestRecord {
       cout << "Start Value: " << startValue << endl;
       cout << "Finish Value: " << finishValue << endl;
       cout << "Weight: " << Weight << endl;
-      out << "Profit: " << Weight << endl;
+      cout << "Compatible Job: " << Weight << endl;
       cout << endl;
     }
     int name;
     int startValue;
     int finishValue;
     int Weight;
-    int Profit;
+    int compatibleJob;
 };
 
 
@@ -57,13 +58,67 @@ bool compareJobs(RequestRecord Request1, RequestRecord Request2){
   }
 }
 
-int computeOptWeight(vector<RequestRecord> &requests, int num_of_jobs){
-  if(num_of_jobs == 0){
-    return 0;
-  }
-  return maximum(computeOptWeight(num_of_jobs-1), requests[num_of_jobs].Weight + computeOptWeight(requests[num_of_jobs].Profit)));
-
+//Function: findNonOverLappingPair
+// Input: vector<RequestRecord> &my_requests, int i
+// Returns index of the non-overlapping pair in the vector, otherwise it's
+// return a -1 since it doesn't have a
+int findNonOverLappingPair(vector<RequestRecord> &my_requests, int interval)
+{
+    for (int i = interval; i >= 0; i--) {
+      // find the non-overlapping pair of weights
+      if (my_requests.at(i).finishValue <= my_requests.at(interval).startValue) {
+        return i;
+      }
+      //&& (findSum(L[j]) > findSum(L[i])))
+  //        L[i] = L[j];
+    }
+    return -1;
 }
+
+// function: findSolution
+// Input: int mem[], vector<RequestRecord> &my_requests, const int num_jobs, int total_weight
+// Returns nothing but outputs the optimal weight and schedule to command
+void findSolution(int mem[], vector<RequestRecord> &my_requests, const int num_jobs, int total_weight) {
+    if (num_jobs == 0) {
+      cout << endl;
+      cout << "The Optimal Weight: " << total_weight << endl;
+        return;
+    }
+    // if the weight + the elemennts in the memoized array is greater than the
+    // element in previous array then print out the interval of the schedule
+    // also calucuates maximum weight from vector> v and recursively calls itself
+    else if (my_requests[num_jobs - 1].Weight + mem[num_jobs] > mem[num_jobs - 1]) {
+       cout << num_jobs << " ";
+       total_weight += my_requests[num_jobs-1].Weight;
+       findSolution(mem, my_requests, my_requests.at(num_jobs - 1).compatibleJob, total_weight);
+    }
+    // if the weight + profit is not greater than previous job then recursively call the function again
+    else {
+        findSolution(mem, my_requests, num_jobs - 1, total_weight);
+        cout << endl;
+    }
+}
+
+// function: iterativeComptOut
+// Input: vector<RequestRecord> &my_requests
+// Returns nothing/
+// Description: creates memoized array that add
+void iterativeCompOpt(vector<RequestRecord> &my_requests){
+  // Using the dynamic bottom-up approach dynamic programming to unwind recursion
+  int memoizedArray[my_requests.size() + 1];
+  // First index has 0 for base case
+  memoizedArray[0] = 0;
+
+  // Add the max values to the memoized array based on the max or largest weight + the compatible job Profits
+  // or if the profit + weight in previous element is higher
+  for (int j = 1; j < my_requests.size(); j++){
+      memoizedArray[j] = max(my_requests[j].Weight + memoizedArray[my_requests[j].compatibleJob], memoizedArray[j-1]);
+  }
+  // create variable to hold total weight when finding the schedule
+  int totalWeight = 0;
+  findSolution(memoizedArray, my_requests, my_requests.size(), totalWeight);
+}
+
 int main(){
     // Declare an input file stream variable
     ifstream myFile;
@@ -78,14 +133,14 @@ int main(){
     vector<RequestRecord> my_requests;
     string line = "";
     getline(myFile, line);
-    cout << line << endl;
-    line = "";
     int n = 1;
+    // read file till end and input all values into the vector
     while(!myFile.eof()){
       int name;
       int start_value;
       int finish_value;
       int weight;
+      int compatible_job = 0;
       string tmpString = "";
 
       name = n;
@@ -101,16 +156,18 @@ int main(){
 
       getline(myFile, tmpString, '\n');
       weight = atoi(tmpString.c_str());
-
-      RequestRecord request(n, start_value, finish_value, weight);
+      compatible_job = 0;
+      RequestRecord request(n, start_value, finish_value, weight, compatible_job);
       my_requests.push_back(request);
       line = " ";
       n++;
       }
+      // show pre sorted requests
       cout << "Pre Sorted Requests" << endl;
-      size_t number_of_jobs = my_requests.size();
-      for(size_t i = 0; i < number_of_jobs; ++i) {
-        cout << my_requests.at(i).name << " " << my_requests.at(i).startValue << " " << my_requests.at(i).finishValue << " "<< my_requests.at(i).Weight << endl;
+      cout << "Start Time " << "End Time " << "Weight " << "Compatible Job" << endl;
+      int number_of_jobs = my_requests.size();
+      for(int i = 0; i < number_of_jobs; ++i) {
+        cout << my_requests.at(i).name << " " << my_requests.at(i).startValue << " " << my_requests.at(i).finishValue << " "<< my_requests.at(i).Weight <<  " " << my_requests.at(i).compatibleJob << endl;
       }
       // sort jobs by finish times so that  f1 <= f2 <= ... <= fn.
       // using built in function from c++
@@ -118,25 +175,31 @@ int main(){
       sort(my_requests.begin(), my_requests.end(), compareJobs);
 
       cout << endl;
-      cout << "Post Sorted Requests" << endl;
-      for(size_t i = 0; i < number_of_jobs; ++i) {
-        cout <<my_requests.at(i).name << " " <<  my_requests.at(i).startValue << " " << my_requests.at(i).finishValue << " "<< my_requests.at(i).Weight << endl;
-      }
-      //calcluate p-values
-      for(size_t i = 0; i < number_of_jobs; ++i) {
-        for(size_t j = 1; j > 0; --j){
-          if(my_requests.at(i).startValue >= my_requests.at(j).finishValue){
-            my_requests.at(i).Profit = j;
-          }
+    //  cout << "Post Sorted Requests" << endl;
+      //for(int i = 0; i < number_of_jobs; ++i) {
+      //  cout <<my_requests.at(i).name << " " <<  my_requests.at(i).startValue << " " << my_requests.at(i).finishValue << " "<< my_requests.at(i).Weight << endl;
+      //}
+      // find compatible jobs
+      // Calculate p(j) for each entry
+      for (int i = number_of_jobs - 1; i >= 0; i--) {
+        int compatibleInterval = findNonOverLappingPair(my_requests, i);
+        if(compatibleInterval != -1){
+          my_requests[i].compatibleJob = compatibleInterval + 1;
         }
-      for(auto request:my_requests){
-        request.display();
+        else{
+          my_requests[i].compatibleJob = 0;
+        }
       }
-      //Calculate the weighted interval schedule
 
-      int memoArray[number_of_jobs];
-
-      for(size_t i = 0; i < number_of_jobs; ++i) {
+      cout << "Post Sorted Array after addition of Compatible Profits" << endl;
+      cout << "Start Time " << "End Time " << "Weight " << "Compatible Job" << endl;
+      for(int i = 0; i < number_of_jobs; ++i) {
+        cout << my_requests.at(i).name << " " << my_requests.at(i).startValue << " " << my_requests.at(i).finishValue << " "<< my_requests.at(i).Weight << " " <<  my_requests.at(i).compatibleJob << endl;
+      }
+    // Output Solution
+    cout << "The Optimal Schedule is: " << endl;
+    iterativeCompOpt(my_requests);
+    cout << endl;
 
     myFile.close();
     return 0;
